@@ -168,3 +168,25 @@ void gerarRelatorioPorCategoria() {
     printf("| %-25s | R$ %12.2f | %8.0f%% |\n", "TOTAL", total, 100.0);
     printf("+---------------------------+-----------------+------------+\n");
 }
+
+void exibirDashboard() {
+    limparTela();
+    desenharCabecalho("DASHBOARD FINANCEIRO");
+    
+    float totalReceitas = calcularTotal("Receita");
+    float totalDespesas = calcularTotal("Despesa");
+    float saldo = totalReceitas - totalDespesas;
+    
+    printf("\n");
+    desenharLinha(50);
+    printf("  RECEITAS TOTAIS:  R$ %18.2f\n", totalReceitas);
+    printf("  DESPESAS TOTAIS:  R$ %18.2f\n", totalDespesas);
+    desenharLinha(50);
+    
+    if (saldo >= 0) {
+        printf("  SALDO POSITIVO:   R$ %18.2f\n", saldo);
+    } else {
+        printf("  SALDO NEGATIVO:   R$ %18.2f\n", saldo);
+    }
+    desenharLinha(50);
+}
