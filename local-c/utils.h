@@ -14,6 +14,10 @@
 
 void limparTela();
 void pausar();
+void criarDiretorioData();
+int validarData(char data[]);
+void desenharLinha(int tamanho);
+void desenharCabecalho(char *titulo);
 
 
 
