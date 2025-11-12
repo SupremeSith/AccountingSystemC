@@ -24,3 +24,147 @@ float calcularTotal(char tipo[]) {
     fclose(file);
     return total;
 }
+
+void menuRelatorios() {
+    int opcao;
+    
+    limparTela();
+    desenharCabecalho("RELATORIOS E ANALISES");
+    
+    printf("\n");
+    printf("  1. Relatorio por mes/ano\n");
+    printf("  2. Relatorio por categoria\n");
+    printf("  0. Voltar\n\n");
+    
+    printf("  Escolha: ");
+    scanf("%d", &opcao);
+    getchar();
+    
+    if (opcao == 1) {
+        int mes, ano;
+        printf("\n  Mes (1-12): ");
+        scanf("%d", &mes);
+        printf("  Ano: ");
+        scanf("%d", &ano);
+        getchar();
+        
+        limparTela();
+        gerarRelatorioPorMes(mes, ano);
+    } else if (opcao == 2) {
+        limparTela();
+        gerarRelatorioPorCategoria();
+    }
+}
+
+void gerarRelatorioPorMes(int mes, int ano) {
+    FILE *file = fopen("data/registros.txt", "r");
+    
+    char titulo[50];
+    sprintf(titulo, "RELATORIO MENSAL %02d/%d", mes, ano);
+    desenharCabecalho(titulo);
+    
+    if (!file) {
+        printf("\n  >> Nenhum dado encontrado.\n");
+        return;
+    }
+    
+    char linha[200];
+    float totalReceita = 0, totalDespesa = 0;
+    int count = 0;
+    
+    printf("\n");
+    printf("+------------+----------------------+-----------------+------------+\n");
+    printf("| %-10s | %-20s | %-15s | %-10s |\n", "TIPO", "CATEGORIA", "VALOR", "DATA");
+    printf("+------------+----------------------+-----------------+------------+\n");
+    
+    while (fgets(linha, sizeof(linha), file)) {
+        Transacao t;
+        sscanf(linha, "%*d;%[^;];%[^;];%f;%s", t.tipo, t.categoria, &t.valor, t.data);
+        
+        int m, a;
+        sscanf(t.data, "%*d/%d/%d", &m, &a);
+        
+        if (m == mes && a == ano) {
+            printf("| %-10s | %-20s | R$ %12.2f | %-10s |\n", 
+                   t.tipo, t.categoria, t.valor, t.data);
+            
+            if (strcmp(t.tipo, "Receita") == 0)
+                totalReceita += t.valor;
+            else
+                totalDespesa += t.valor;
+            
+            count++;
+        }
+    }
+    
+    fclose(file);
+    
+    printf("+------------+----------------------+-----------------+------------+\n");
+    printf("\n");
+    desenharLinha(50);
+    printf("  RESUMO FINANCEIRO:\n");
+    desenharLinha(50);
+    printf("  Receitas:      R$ %12.2f\n", totalReceita);
+    printf("  Despesas:      R$ %12.2f\n", totalDespesa);
+    printf("  ---------------------------------\n");
+    printf("  Lucro liquido: R$ %12.2f\n", totalReceita - totalDespesa);
+    printf("  Transacoes:    %15d\n", count);
+    desenharLinha(50);
+}
+
+void gerarRelatorioPorCategoria() {
+    FILE *file = fopen("data/registros.txt", "r");
+    
+    desenharCabecalho("RELATORIO POR CATEGORIA");
+    
+    if (!file) {
+        printf("\n  >> Nenhum dado encontrado.\n");
+        return;
+    }
+    
+    char categorias[100][50];
+    float valores[100] = {0};
+    int count = 0;
+    
+    char linha[200];
+    while (fgets(linha, sizeof(linha), file)) {
+        Transacao t;
+        sscanf(linha, "%*d;%*[^;];%[^;];%f;", t.categoria, &t.valor);
+        
+        int found = 0;
+        for (int i = 0; i < count; i++) {
+            if (strcmp(categorias[i], t.categoria) == 0) {
+                valores[i] += t.valor;
+                found = 1;
+                break;
+            }
+        }
+        
+        if (!found) {
+            strcpy(categorias[count], t.categoria);
+            valores[count] = t.valor;
+            count++;
+        }
+    }
+    
+    fclose(file);
+    
+    float total = 0;
+    for (int i = 0; i < count; i++) {
+        total += valores[i];
+    }
+    
+    printf("\n");
+    printf("+---------------------------+-----------------+------------+\n");
+    printf("| %-25s | %-15s | %-10s |\n", "CATEGORIA", "VALOR", "PERCENTUAL");
+    printf("+---------------------------+-----------------+------------+\n");
+    
+    for (int i = 0; i < count; i++) {
+        float percentual = (valores[i] / total) * 100;
+        printf("| %-25s | R$ %12.2f | %8.1f%% |\n", categorias[i], valores[i], percentual);
+    }
+    
+    printf("+---------------------------+-----------------+------------+\n");
+    printf("| %-25s | R$ %12.2f | %8.0f%% |\n", "TOTAL", total, 100.0);
+    printf("+---------------------------+-----------------+------------+\n");
+}
