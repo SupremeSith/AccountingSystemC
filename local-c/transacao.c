@@ -4,6 +4,8 @@
 #include "transacao.h"
 #include "utils.h"
 
+
+
 int obterProximoID() {
     FILE *file = fopen("data/registros.txt", "r");
     int maxID = 0;
@@ -21,6 +23,8 @@ int obterProximoID() {
     return maxID + 1;
 }
 
+
+
 void cadastrarTransacao() {
     Transacao t;
     FILE *file = fopen("data/registros.txt", "a");
@@ -32,6 +36,8 @@ void cadastrarTransacao() {
     
     limparTela();
     desenharCabecalho("CADASTRAR NOVA TRANSACAO");
+    
+
     
     t.id = obterProximoID();
     
