@@ -7,15 +7,21 @@ void limparTela() {
     system(CLEAR);
 }
 
+
+
 void pausar() {
     printf("\n  Pressione ENTER para continuar...");
     getchar();
 }
 
+
+
 void desenharLinha(int tamanho) {
     for (int i = 0; i < tamanho; i++) printf("-");
     printf("\n");
 }
+
+
 
 void desenharCabecalho(char *titulo) {
     int tam = strlen(titulo);
@@ -29,6 +35,8 @@ void desenharCabecalho(char *titulo) {
     desenharLinha(total);
 }
 
+
+
 void criarDiretorioData() {
     #ifdef _WIN32
         system("if not exist data mkdir data");
@@ -36,6 +44,8 @@ void criarDiretorioData() {
         system("mkdir -p data");
     #endif
 }
+
+
 
 int validarData(char data[]) {
     int dia, mes, ano;
