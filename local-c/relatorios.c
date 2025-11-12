@@ -190,3 +190,46 @@ void exibirDashboard() {
     }
     desenharLinha(50);
 }
+
+void exportarCSV() {
+    FILE *entrada = fopen("data/registros.txt", "r");
+    FILE *saida = fopen("data/relatorio.csv", "w");
+    
+    limparTela();
+    desenharCabecalho("EXPORTAR PARA CSV");
+    
+    if (!entrada) {
+        printf("\n  >> ERRO: Nenhum dado para exportar!\n");
+        if (saida) fclose(saida);
+        return;
+    }
+    
+    if (!saida) {
+        printf("\n  >> ERRO: Nao foi possivel criar o arquivo CSV!\n");
+        fclose(entrada);
+        return;
+    }
+    
+    fprintf(saida, "ID,TIPO,CATEGORIA,VALOR,DATA\n");
+    
+    char linha[200];
+    int count = 0;
+    
+    while (fgets(linha, sizeof(linha), entrada)) {
+        Transacao t;
+        sscanf(linha, "%d;%[^;];%[^;];%f;%s", &t.id, t.tipo, t.categoria, &t.valor, t.data);
+        fprintf(saida, "%d,%s,%s,%.2f,%s\n", t.id, t.tipo, t.categoria, t.valor, t.data);
+        count++;
+    }
+    
+    fclose(entrada);
+    fclose(saida);
+    
+    printf("\n");
+    desenharLinha(50);
+    printf("  >> Arquivo CSV gerado com sucesso!\n");
+    printf("  >> Localizacao: data/relatorio.csv\n");
+    printf("  >> Registros exportados: %d\n", count);
+    desenharLinha(50);
+    printf("\n  Voce pode abrir este arquivo no Excel!\n");
+}
