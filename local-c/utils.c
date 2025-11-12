@@ -29,7 +29,19 @@ void desenharCabecalho(char *titulo) {
     desenharLinha(total);
 }
 
+void criarDiretorioData() {
+    #ifdef _WIN32
+        system("if not exist data mkdir data");
+    #else
+        system("mkdir -p data");
+    #endif
+}
 
-
-
-
+int validarData(char data[]) {
+    int dia, mes, ano;
+    if (sscanf(data, "%d/%d/%d", &dia, &mes, &ano) != 3) return 0;
+    if (mes < 1 || mes > 12) return 0;
+    if (dia < 1 || dia > 31) return 0;
+    if (ano < 1900 || ano > 2100) return 0;
+    return 1;
+}
